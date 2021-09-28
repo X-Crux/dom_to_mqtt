@@ -38,8 +38,7 @@ def fresh_list_full():
     list_accs = []
     try:
         for acc in fresh_info['result']:
-            if int(acc['Used']) == 1:
-                list_accs.append(acc)
+            list_accs.append(acc)
     except Exception:
         pass
 
@@ -99,7 +98,7 @@ def convert_dom(dev_data):
         get_topic = f'temperature/idx{idx}/currenttemperature/get'
         _form = form_dom_temperature(dev_data, idx, get_topic)
     else:
-        return None, None, None
+        return None, None, None, None
 
     return _form, _type, get_topic, idx
 
