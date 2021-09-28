@@ -47,10 +47,18 @@ def fresh_list_full():
 
 def _value(_data, _type):
     if _type == 'Temp':
-        value = _data.split(' ')[0]
+        value = float(_data.split(' ')[0])
+    elif _type == 'Humidity':
+        value = float(_data.split(' ')[1])
+    elif _type == 'Light/Switch':
+        if _data == 'Off':
+            value = 'false'
+        else:
+            value = 'true'
     else:
-        value = _data.split(' ')[1]
-    return float(value)
+        value = None
+
+    return value
 
 
 def form_dom_humidity(acc_info, idx, get_topic):
@@ -87,6 +95,23 @@ def form_dom_temperature(acc_info, idx, get_topic):
     }
 
 
+def form_dom_motion(acc_info, idx, get_topic):
+    return {
+        "topic": f"motion/idx{idx}",
+        "name": acc_info["Name"],
+        "manufacturer": "DIY",
+        "model": "motionsensor",
+        "serialNumber": f'{acc_info["ID"]}_{idx}',
+        "type": "motionsensor",
+        "feature": {
+            "motiondetected": {
+                "getTopic": get_topic,
+                "setTopic": f"motion/idx{idx}/motiondetected/set"
+            }
+        }
+    }
+
+
 def convert_dom(dev_data):
     _type = dev_data['Type']
     idx = dev_data['idx']
@@ -94,9 +119,12 @@ def convert_dom(dev_data):
     if _type == 'Humidity':
         get_topic = f'humidity/idx{idx}/currentrelativehumidity/get'
         _form = form_dom_humidity(dev_data, idx, get_topic)
-    elif _type in 'Temp':
+    elif _type == 'Temp':
         get_topic = f'temperature/idx{idx}/currenttemperature/get'
         _form = form_dom_temperature(dev_data, idx, get_topic)
+    elif _type == 'Light/Switch':
+        get_topic = f'motion/idx{idx}/motiondetected/get'
+        _form = form_dom_motion(dev_data, idx, get_topic)
     else:
         return None, None, None, None
 
@@ -141,9 +169,8 @@ def publish(client):
 
                         # отправка значения
                         msg = _value(acc['Data'], _type)
-                        result = client.publish(get_topic,
-                                                str(msg).replace("'", '"'),
-                                                retain=True)
+                        result = client.publish(
+                            get_topic, str(msg).replace("'", '"'), retain=True)
                         status = result[0]
 
                         if status == 0:
@@ -169,7 +196,12 @@ def subscribe(client: mqtt_client):
         try:
             type_access = dict_msg['dtype']
             _idx = dict_msg['idx']
-            value = float(dict_msg['nvalue'])
+
+            try:
+                value = float(dict_msg['nvalue'])
+            except Exception:
+                value = dict_msg['nvalue']
+
         except Exception as exp:
             log.error(exp)
             type_access = None
@@ -179,6 +211,8 @@ def subscribe(client: mqtt_client):
                 get_topic = f'temperature/idx{_idx}/currenttemperature/get'
             elif type_access == 'Humidity':
                 get_topic = f'humidity/idx{_idx}/currentrelativehumidity/get'
+            elif type_access == 'Light/Switch':
+                get_topic = f'motion/idx{_idx}/motiondetected/get'
             else:
                 get_topic = None
 
