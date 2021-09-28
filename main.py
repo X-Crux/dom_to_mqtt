@@ -138,18 +138,22 @@ def publish(client):
 
                     if status == 0:
                         log.info(f"Send `{msg}` to topic `{announce_topic}`")
+
+                        # отправка значения
+                        msg = _value(acc['Data'], _type)
+                        result = client.publish(get_topic,
+                                                str(msg).replace("'", '"'),
+                                                retain=True)
+                        status = result[0]
+
+                        if status == 0:
+                            log.info(f"Send `{msg}` to topic `{get_topic}`")
+                        else:
+                            log.info(
+                                f"Failed to send message to topic {get_topic}")
+
                     else:
                         log.info(f"Failed to send message to topic {announce_topic}")
-
-                    # отправка значения
-                    msg = _value(acc['Data'], _type)
-                    result = client.publish(get_topic, str(msg).replace("'", '"'), retain=True)
-                    status = result[0]
-
-                    if status == 0:
-                        log.info(f"Send `{msg}` to topic `{get_topic}`")
-                    else:
-                        log.info(f"Failed to send message to topic {get_topic}")
 
         else:
             log.info(f"No active devices")
