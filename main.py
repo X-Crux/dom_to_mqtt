@@ -112,7 +112,7 @@ def connect_mqtt():
             print("Failed to connect, return code %d\n", rc)
 
     client = mqtt_client.Client(client_id)
-    # client.username_pw_set(username, password)
+    client.username_pw_set(username, password)
     client.on_connect = on_connect
     client.connect(broker, port)
     return client
@@ -215,6 +215,8 @@ if __name__ == '__main__':
     broker = _data['mqtt']['broker']
     port = _data['mqtt']['port']
     topic = _data['mqtt']['topic']
+    username = _data['mqtt']['username']
+    password = _data['mqtt']['password']
 
     # _url = args.host
 
