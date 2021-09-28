@@ -131,24 +131,25 @@ def publish(client):
                 msg, _type, get_topic, idx = convert_dom(acc)
                 announce_topic = f'announce/idx{idx}/'
 
-                # отправка анонса
-                result = client.publish(announce_topic, str(msg).replace("'", '"'), retain=True)
-                status = result[0]
+                if _type:
+                    # отправка анонса
+                    result = client.publish(announce_topic, str(msg).replace("'", '"'), retain=True)
+                    status = result[0]
 
-                if status == 0:
-                    log.info(f"Send `{msg}` to topic `{announce_topic}`")
-                else:
-                    log.info(f"Failed to send message to topic {announce_topic}")
+                    if status == 0:
+                        log.info(f"Send `{msg}` to topic `{announce_topic}`")
+                    else:
+                        log.info(f"Failed to send message to topic {announce_topic}")
 
-                # отправка значения
-                msg = _value(acc['Data'], _type)
-                result = client.publish(get_topic, str(msg).replace("'", '"'), retain=True)
-                status = result[0]
+                    # отправка значения
+                    msg = _value(acc['Data'], _type)
+                    result = client.publish(get_topic, str(msg).replace("'", '"'), retain=True)
+                    status = result[0]
 
-                if status == 0:
-                    log.info(f"Send `{msg}` to topic `{get_topic}`")
-                else:
-                    log.info(f"Failed to send message to topic {get_topic}")
+                    if status == 0:
+                        log.info(f"Send `{msg}` to topic `{get_topic}`")
+                    else:
+                        log.info(f"Failed to send message to topic {get_topic}")
 
         else:
             log.info(f"No active devices")
@@ -177,13 +178,14 @@ def subscribe(client: mqtt_client):
             else:
                 get_topic = None
 
-            result = client.publish(get_topic, str(value).replace("'", '"'), retain=True)
-            status = result[0]
+            if get_topic:
+                result = client.publish(get_topic, str(value).replace("'", '"'), retain=True)
+                status = result[0]
 
-            if status == 0:
-                log.info(f"Send `{value}` to topic `{get_topic}`")
-            else:
-                log.info(f"Failed to send message to topic {get_topic}")
+                if status == 0:
+                    log.info(f"Send `{value}` to topic `{get_topic}`")
+                else:
+                    log.info(f"Failed to send message to topic {get_topic}")
 
         else:
             pass
