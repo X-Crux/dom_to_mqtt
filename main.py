@@ -1,7 +1,6 @@
 import argparse
 import time
 import requests
-import toml
 import logging
 import random
 import json
@@ -30,8 +29,6 @@ def get_response(url):
 
 def fresh_list_full():
     # подробный список актуальных датчиков
-    data = toml.load("data.toml")
-    _url = data['domoticz']['url']
     url = f'http://{_url}/json.htm?type=devices'
     fresh_info = get_response(url)
 
@@ -240,23 +237,21 @@ def pub():
 
 
 if __name__ == '__main__':
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument("-h", "--host", type=str, help="host domoticz")  # "192.168.0.74:8080"
-    # parser.add_argument("-b", "--broker", type=str, help="host mqtt broker")  # "192.168.0.74"
-    # parser.add_argument("-u", "--username", type=str, help="set username")
-    # parser.add_argument("-p", "--password", type=str, help="set password")
-    # args = parser.parse_args()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-u", "--username", type=str, help="mqtt username")
+    parser.add_argument("-p", "--password", type=str, help="mqtt password")
+    parser.add_argument("-b", "--broker", type=str, help="ip mqtt broker")  # "192.168.0.74"
+    parser.add_argument("-s", "--port", type=str, help="port mqtt broker")  # "1883"
+    parser.add_argument("-t", "--topic", type=str, help="mqtt topic domoticz")  # "domoticz/#"
+    parser.add_argument("-h", "--host", type=str, help="host domoticz [host:port]")  # "Host:Port"
+    args = parser.parse_args()
 
     client_id = f'python-mqtt-{random.randint(0, 1000)}'
-    # broker = args.broker
-    # port = 1883
-    _data = toml.load("data.toml")
-    broker = _data['mqtt']['broker']
-    port = _data['mqtt']['port']
-    topic = _data['mqtt']['topic']
-    username = _data['mqtt']['username']
-    password = _data['mqtt']['password']
-
-    # _url = args.host
+    username = args.username
+    password = args.password
+    broker = args.broker
+    port = int(args.port)
+    topic = args.topic
+    _url = args.host
 
     pub()
