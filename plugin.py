@@ -7,13 +7,12 @@
   </description>
     <params>
         <h3>MQTT</h3>
-        <param field="Username" label="Username" width="200px" />
-        <param field="Password" label="Password" width="200px" />
-        <param field="Broker" label="IP Broker" width="200px" />
-        <param field="Port" label="Port" width="200px" />
-        <param field="Topic" label="Domoticz Topic" width="200px" />
-        <h3>Domoticz</h3>
-        <param field="Url" label="Host:Port" width="200px" />
+        <param field="Username" label="MQTT username" width="200px" />
+        <param field="Password" label="MQTT password" width="200px" />
+        <param field="Broker" label="MQTT ip broker" width="200px" />
+        <param field="Port" label="MQTT port" width="200px" />
+        <param field="Topic" label="MQTT Domoticz Topic" width="200px" />
+        <param field="Url" label="Domoticz host:port" width="200px" />
     </params>
     <p id="pairing_digits"></p>
     <div class="qr_container">
