@@ -6,13 +6,12 @@
     <h2>MQTT to HomeKit plugin</h2>
   </description>
     <params>
-        <h3>MQTT</h3>
-        <param field="Username" label="MQTT username" width="200px" />
-        <param field="Password" label="MQTT password" width="200px" />
-        <param field="Broker" label="MQTT ip broker" width="200px" />
-        <param field="Port" label="MQTT port" width="200px" />
-        <param field="Topic" label="MQTT Domoticz Topic" width="200px" />
-        <param field="Url" label="Domoticz host:port" width="200px" />
+        # <param field="Username" label="MQTT username" width="200px" />
+        # <param field="Password" label="MQTT password" width="200px" />
+        # <param field="Broker" label="MQTT ip broker" width="200px" />
+        # <param field="Port" label="MQTT port" width="200px" />
+        # <param field="Topic" label="MQTT Domoticz Topic" width="200px" />
+        # <param field="Url" label="Domoticz host:port" width="200px" />
     </params>
     <p id="pairing_digits"></p>
     <div class="qr_container">
@@ -20,6 +19,7 @@
 </plugin>
 """
 
+import toml
 import Domoticz
 import subprocess
 # from multiprocessing import Process
@@ -37,17 +37,33 @@ class BasePlugin:
     def onStart(self):
         Domoticz.Log("MQTT to HomeKit onStart called")
 
+        # # = = = = = = = = = Config = = = = = = = = =
+        #
+        # # [mqtt]
+        # username = Parameters["Username"]
+        # password = Parameters["Password"]
+        # broker = Parameters["Broker"]
+        # port = int(Parameters["Port"])
+        # topic = Parameters["Topic"]
+        #
+        # # [domoticz]
+        # url = Parameters["Url"]
+        #
+        # # = = = = = = = = = = = = = = = = = = = = =
+
         # = = = = = = = = = Config = = = = = = = = =
 
+        data = toml.load("data.toml")
+
         # [mqtt]
-        username = Parameters["Username"]
-        password = Parameters["Password"]
-        broker = Parameters["Broker"]
-        port = int(Parameters["Port"])
-        topic = Parameters["Topic"]
+        username = data["mqtt"]["username"]
+        password = data["mqtt"]["password"]
+        broker = data["mqtt"]["broker"]
+        port = int(data["mqtt"]["port"])
+        topic = data["mqtt"]["topic"]
 
         # [domoticz]
-        url = Parameters["Url"]
+        url = data["domoticz"]["url"]
 
         # = = = = = = = = = = = = = = = = = = = = =
 

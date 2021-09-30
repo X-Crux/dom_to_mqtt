@@ -1,0 +1,13 @@
+[mqtt]
+username = "Grigory"
+password = "GrigoryPass"
+#broker = "lytko.com"
+broker = "192.168.0.75"
+port = 1883
+#topic = "Grigory/domoticz/#"
+topic = "Domoticz/#"
+# Domoticz/#
+
+[domoticz]
+#url = "127.0.0.1:8080"
+url = "192.168.0.75:8080"
